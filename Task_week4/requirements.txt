@@ -9,3 +9,5 @@ sentence-transformers
 chromadb
 pypdf
 faster-whisper
+datasets
+python-dotenv
