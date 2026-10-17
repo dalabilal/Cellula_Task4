@@ -3,6 +3,7 @@
 An intelligent coding assistant built with **Streamlit**, **Chroma** (RAG) and a free **OpenRouter** LLM.
 It explains code, generates code from a knowledge base, runs the generated code, and learns from user feedback.
 
+[The Rag deploy link](https://cellulatask4-mquov49lcbrjw66h39rjst.streamlit.app/)
 Cellula Technologies NLP Internship - Project 2.
 
 ## Features
