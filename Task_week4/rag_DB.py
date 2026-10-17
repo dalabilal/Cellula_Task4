@@ -1,14 +1,9 @@
-"""File 2 - rag_db.py
-Everything about the Chroma vector database:
-chunking -> embeddings -> store -> similarity search (top-k).
-"""
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import Language, RecursiveCharacterTextSplitter
 
 def add_humaneval():
-    """Loads the HumanEval dataset into Chroma (only once)."""
     from datasets import load_dataset
 
    
@@ -32,8 +27,9 @@ def add_humaneval():
             )
         )
 
-    db.add_documents(docs) 
-    return len(docs)
+    chunks = splitter.split_documents(docs) 
+    db.add_documents(chunks)
+    return len(chunks)
 
 
 splitter = RecursiveCharacterTextSplitter.from_language(
@@ -52,7 +48,6 @@ db = Chroma(
 
 
 def add_documents(docs):
-    """Chunk the documents, embed them, store them in Chroma. Returns number of chunks."""
     chunks = splitter.split_documents(docs)
     chunks = [c for c in chunks if c.page_content.strip()]
     if chunks:
@@ -61,7 +56,6 @@ def add_documents(docs):
 
 
 def add_solution(solution_text, question):
-    """Human-feedback learning: store a solution given by the user."""
     doc = Document(
         page_content=f"Question: {question}\n\nSolution:\n{solution_text}",
         metadata={"source": "user_feedback", "question": question},
@@ -70,7 +64,6 @@ def add_solution(solution_text, question):
 
 
 def search(query, k=3):
-    """Top-k similarity search over HumanEval + user feedback only."""
     return db.similarity_search(
         query, k=k,
         filter={"source": {"$in": ["humaneval", "user_feedback"]}},

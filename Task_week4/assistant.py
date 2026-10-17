@@ -1,7 +1,3 @@
-"""File 3 - assistant.py
-The "brain": LLM (OpenRouter), intent classifier, router, relevance check,
-code generation, memory formatting and the code runner tool.
-"""
 import os
 import re
 import subprocess
@@ -68,11 +64,11 @@ def classify(query):
 # ---------------------------------------------------------------- 2) relevance check
 def is_relevant(query, context):
     system = (
-        "You are a relevance evaluator. Decide if the retrieved context is related "
-        "to the user's programming request or could help in writing the answer "
-        "(same language, same concept, or a similar coding task). "
-        "Only say NOT_RELEVANT if the context is completely unrelated. "
-        "Answer with ONE word only: RELEVANT or NOT_RELEVANT.")
+        "You are a relevance evaluator. Is the retrieved context sufficiently relevant "
+        "to answer the user's programming request? It must contain the same kind of task "
+        "or concept the user asks for. Using the same programming language is NOT enough. "
+        "Answer with ONE word only: RELEVANT or NOT_RELEVANT."
+    )
        
     answer = ask(system, f"Request:\n{query}\n\nRetrieved context:\n{context}")
     print("RELEVANCE CHECK ANSWER:", answer)  # visible in your terminal

@@ -1,7 +1,3 @@
-"""File 1 - loader.py
-Turns uploaded files (txt, md, py, pdf, wav, mp3) into LangChain Documents.
-Audio files are transcribed to text with faster-whisper.
-"""
 import os
 import tempfile
 
@@ -20,7 +16,6 @@ def _get_whisper():
 
 
 def load_files(files):
-    """files = list of Streamlit UploadedFile objects. Returns a list of Documents."""
     all_docs = []
 
     for file in files: 

@@ -1,8 +1,6 @@
-"""File 4 - app.py
-Streamlit user interface. Run with:  streamlit run app.py
-"""
 import streamlit as st
-
+import json
+import os
 import assistant
 import loader
 import rag_DB
@@ -10,15 +8,39 @@ import rag_DB
 st.set_page_config(page_title="AI Coding Assistant", layout="wide")
 st.title("AI Coding Assistant")
 
+MEMORY_FILE = "memory.json"
+
+
+def load_memory():
+    if os.path.exists(MEMORY_FILE):
+        try:
+            with open(MEMORY_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {"messages": [], "prefs": "Python"}
+
+
+def save_memory():
+    with open(MEMORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(
+            {"messages": st.session_state.messages, "prefs": st.session_state.prefs},
+            f, ensure_ascii=False, indent=2,
+        )
+
+
+saved = load_memory()
 if "messages" not in st.session_state:
-    st.session_state.messages = []           
+    st.session_state.messages = saved["messages"]
+if "prefs" not in st.session_state:
+    st.session_state.prefs = saved["prefs"]
 if "pending_question" not in st.session_state:
-    st.session_state.pending_question = None  
+    st.session_state.pending_question = None
 
 
 with st.sidebar:
     st.header("Settings")
-    prefs = st.text_input("Preferences (language / framework)", "Python")
+    prefs = st.text_input("Preferences (language / framework)", key="prefs")
 
     st.header("File to explain")
     files = st.file_uploader(
@@ -34,6 +56,7 @@ with st.sidebar:
     if st.button("Clear chat"):
         st.session_state.messages = []
         st.session_state.pending_question = None
+        save_memory()
         st.rerun()
 
     with st.expander("Memory (what the LLM sees)"):
@@ -102,4 +125,5 @@ if query:
                 st.session_state.pending_question = query
 
     st.session_state.messages.append({"role": "assistant", "content": reply, "route": route})
-    st.rerun()  
+    save_memory()  
+    st.rerun()
