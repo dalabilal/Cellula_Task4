@@ -3,6 +3,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import streamlit as st
 
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -13,7 +14,7 @@ load_dotenv()  # reads the .env file next to the code
 
 MODEL = "openrouter/free"
 
-API_KEY = os.getenv("OPENROUTER_API_KEY")
+API_KEY = os.getenv("OPENROUTER_API_KEY") or st.secrets.get("OPENROUTER_API_KEY")
 if not API_KEY:
     raise RuntimeError("OPENROUTER_API_KEY not found. Put it in a .env file next to app.py")
 
